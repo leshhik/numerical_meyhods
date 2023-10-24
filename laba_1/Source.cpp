@@ -1,4 +1,4 @@
-#include "Header.h"
+#include "Header1.h"
 void printMatrix(double** matrix, double* vector, int size)
 {
     cout << "Matrix A and Vector b:" << endl;
