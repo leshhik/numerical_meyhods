@@ -1,78 +1,95 @@
-#include "Header1.h"
+#include "Header.h"
+void printMatrix(double** matrix, double* vector, int size)
+{
+    cout << "Matrix A and Vector b:" << endl;
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            cout << matrix[i][j] << "\t";
+        }
+        cout << "\t" << vector[i];
+        cout << endl;
+    }
+    cout << endl;
+}
 
 double* metodGauss(double** a, double* b, int n)
 {
     double* x, max;
     int k, index;
-    const double eps = 0.00001;  // Точность
+    const double eps = 0.00001;  // РўРѕС‡РЅРѕСЃС‚СЊ
 
     x = new double[n];
     k = 0;
-
-    while (k < n) // Поиск строки с максимальным a[i][k]
-    {
-        max = abs(a[k][k]);
-        index = k;
-
-        for (int i = k + 1; i < n; i++)
+        for (int k = 0; k < n; k++) // РџРѕРёСЃРє СЃС‚СЂРѕРєРё СЃ РјР°РєСЃРёРјР°Р»СЊРЅС‹Рј a[i][k]
         {
-            if (abs(a[i][k]) > max)
+            double max = abs(a[k][k]);
+            int index = k;
+
+            for (int i = k + 1; i < n; i++)
             {
-                max = abs(a[i][k]);
-                index = i;
+                if (abs(a[i][k]) > max)
+                {
+                    max = abs(a[i][k]);
+                    index = i;
+                }
+            }
+
+            if (max < eps) // РџСЂРѕРІРµСЂРєР° РЅР° РЅСѓР»РµРІРѕР№ СЃС‚РѕР»Р±РµС†
+            {
+                cout << "The solution cannot be obtained due to the zero column ";
+                cout << index << " of the matrix A" << endl;
+                return nullptr;
+            }
+
+            for (int j = 0; j < n; j++) // РџРµСЂРµСЃС‚Р°РЅРѕРІРєР° СЃС‚СЂРѕРє
+            {
+                double value = a[k][j];
+                a[k][j] = a[index][j];
+                a[index][j] = value;
+            }
+
+            double value = b[k];
+            b[k] = b[index];
+            b[index] = value;
+
+            cout << "Iteration " << k + 1 << ":" << endl;
+            printMatrix(a, b, n);
+
+            // РќРѕСЂРјР°Р»РёР·Р°С†РёСЏ СѓСЂР°РІРЅРµРЅРёР№
+            for (int i = k; i < n; i++)
+            {
+                double value = a[i][k];
+
+                if (abs(value) < eps) // РќРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РґР»СЏ РЅСѓР»РµРІРѕРіРѕ РєРѕСЌС„С„РёС†РёРµРЅС‚Р°
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < n; j++)
+                {
+                    a[i][j] = a[i][j] / value;
+                }
+                b[i] = b[i] / value;
+
+                if (i == k) // Р”Р»СЏ С‚РѕРіРѕ С‡С‚РѕР±С‹ СѓСЂР°РІРЅРµРЅРёРµ РЅРµ РІС‹С‡РёС‚Р°Р»РѕСЃСЊ СЃР°РјРѕ РёР· СЃРµР±СЏ
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < n; j++)
+                {
+                    a[i][j] = a[i][j] - a[k][j];
+                }
+                b[i] = b[i] - b[k];
             }
         }
 
-        if (max < eps) // Проверка на нулевой столбец
-        {
-            cout << "The solution cannot be obtained due to the zero column ";
-            cout << index << " of the matrix A" << endl;
-            return 0;
-        }
+    cout << "Final iteration:" << endl;
+    printMatrix(a, b, n);
 
-        for (int j = 0; j < n; j++) // Перестановка строк
-        {
-            double value = a[k][j];
-            a[k][j] = a[index][j];
-            a[index][j] = value;
-        }
-
-        double value = b[k];
-        b[k] = b[index];
-        b[index] = value;
-
-        // Нормализация уравнений
-        for (int i = k; i < n; i++)
-        {
-            double value = a[i][k];
-
-            if (abs(value) < eps) // Не выполняется для нулевого коэффициента
-            {
-                continue;
-            }
-
-            for (int j = 0; j < n; j++)
-            {
-                a[i][j] = a[i][j] / value;
-            }
-            b[i] = b[i] / value;
-
-            if (i == k) // Для того чтобы уравнение не вычиталось само из себя
-            {
-                continue;
-            }
-
-            for (int j = 0; j < n; j++)
-            {
-                a[i][j] = a[i][j] - a[k][j];
-            }
-            b[i] = b[i] - b[k];
-        }
-
-        k++;
-    }
-
-    for (k = n - 1; k >= 0; k--) // Обратный ход
+    for (k = n - 1; k >= 0; k--) // РћР±СЂР°С‚РЅС‹Р№ С…РѕРґ
     {
         x[k] = b[k];
 
@@ -89,15 +106,15 @@ double* metodGauss2(double** a, double* F, int n)
 {
     double* x, max;
     int k, index;
-    const double eps = 0.00001;  // Точность
+    const double eps = 0.00001;  // РўРѕС‡РЅРѕСЃС‚СЊ
 
     x = new double[n];
     k = 0;
 
-    while (k < n) // Поиск строки с максимальным a[i][k]
+    for (int k = 0; k < n; k++) // РџРѕРёСЃРє СЃС‚СЂРѕРєРё СЃ РјР°РєСЃРёРјР°Р»СЊРЅС‹Рј a[i][k]
     {
-        max = abs(a[k][k]);
-        index = k;
+        double max = abs(a[k][k]);
+        int index = k;
 
         for (int i = k + 1; i < n; i++)
         {
@@ -108,14 +125,14 @@ double* metodGauss2(double** a, double* F, int n)
             }
         }
 
-        if (max < eps) // Проверка на нулевой столбец
+        if (max < eps) // РџСЂРѕРІРµСЂРєР° РЅР° РЅСѓР»РµРІРѕР№ СЃС‚РѕР»Р±РµС†
         {
             cout << "The solution cannot be obtained due to the zero column ";
             cout << index << " of the matrix A" << endl;
-            return 0;
+            return nullptr;
         }
 
-        for (int j = 0; j < n; j++) // Перестановка строк
+        for (int j = 0; j < n; j++) // РџРµСЂРµСЃС‚Р°РЅРѕРІРєР° СЃС‚СЂРѕРє
         {
             double value = a[k][j];
             a[k][j] = a[index][j];
@@ -126,12 +143,12 @@ double* metodGauss2(double** a, double* F, int n)
         F[k] = F[index];
         F[index] = value;
 
-        // Нормализация уравнений
+        // РќРѕСЂРјР°Р»РёР·Р°С†РёСЏ СѓСЂР°РІРЅРµРЅРёР№
         for (int i = k; i < n; i++)
         {
             double value = a[i][k];
 
-            if (abs(value) < eps) // Не выполняется для нулевого коэффициента
+            if (abs(value) < eps) // РќРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РґР»СЏ РЅСѓР»РµРІРѕРіРѕ РєРѕСЌС„С„РёС†РёРµРЅС‚Р°
             {
                 continue;
             }
@@ -142,7 +159,7 @@ double* metodGauss2(double** a, double* F, int n)
             }
             F[i] = F[i] / value;
 
-            if (i == k) // Для того чтобы уравнение не вычиталось само из себя
+            if (i == k) // Р”Р»СЏ С‚РѕРіРѕ С‡С‚РѕР±С‹ СѓСЂР°РІРЅРµРЅРёРµ РЅРµ РІС‹С‡РёС‚Р°Р»РѕСЃСЊ СЃР°РјРѕ РёР· СЃРµР±СЏ
             {
                 continue;
             }
@@ -153,11 +170,9 @@ double* metodGauss2(double** a, double* F, int n)
             }
             F[i] = F[i] - F[k];
         }
-
-        k++;
     }
 
-    for (k = n - 1; k >= 0; k--) // Обратный ход
+    for (int k = n - 1; k >= 0; k--) // РћР±СЂР°С‚РЅС‹Р№ С…РѕРґ
     {
         x[k] = F[k];
 
