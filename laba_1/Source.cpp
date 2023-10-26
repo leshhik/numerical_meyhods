@@ -9,7 +9,7 @@ void readMatrix(double** matrix, int size)
             cout << "a[" << i << "][" << j << "] = ";
             cin >> matrix[i][j];
         }
-        cout << std::endl;
+        cout << endl;
     }
 }
 
@@ -20,7 +20,7 @@ void readVector(double* vector, int size)
         cout << "b[" << i << "] = ";
         cin >> vector[i];
     }
-    cout << std::endl;
+    cout << endl;
 }
 
 void printMatrix(double** matrix, double* vector, int size) {
