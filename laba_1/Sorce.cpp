@@ -130,19 +130,13 @@ void printResidualVector(double** matrix, double* vector, double* solution, int 
 {
     double* residual = new double[size];
 
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         residual[i] = 0;
-        for (int j = 0; j < size; j++)
+        for (int j = 0; j < size; j++) 
         {
             residual[i] += matrix[i][j] * solution[j];
         }
-    }
-
-    for (int i = 0; i < size; i++)
-    {
-        residual[i] -= vector[i];
-        cout << "F[" << i << "] = " << residual[i] << endl;
+        cout << "F[" << i << "] = " << residual[i] - vector[i] << endl;
     }
     cout << endl;
 
