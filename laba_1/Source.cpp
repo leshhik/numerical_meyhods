@@ -12,7 +12,13 @@ void readMatrix(double** matrix, int size)
         cout << endl;
     }
 }
-
+void normalizeRow(double* row, double divisor, int size)
+{
+    for (int j = 0; j < size; j++)
+    {
+        row[j] /= divisor;
+    }
+}
 void readVector(double* vector, int size)
 {
     for (int i = 0; i < size; i++)
@@ -23,19 +29,20 @@ void readVector(double* vector, int size)
     cout << endl;
 }
 
-void printMatrix(double** matrix, double* vector, int size) {
-    cout << "Matrix A and Vector b:" << endl;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            cout << matrix[i][j] << "\t";
+void printMatrix(double** matrix, double* vector, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            cout << matrix[i][j] << " ";
         }
-        cout << "\t" << vector[i];
-        cout << endl;
+        cout << "| " << vector[i] << endl;
     }
     cout << endl;
 }
 
-double* gaussianElimination(double** matrix, double* vector, int size)
+double* gaussSolution(double** matrix, double* vector, int size)
 {
     const double eps = 0.00001; // Точность
 
@@ -66,18 +73,31 @@ double* gaussianElimination(double** matrix, double* vector, int size)
         swap(vector[k], vector[maxRow]);
 
         // Нормализация уравнений
+        double divisor = matrix[k][k];
+        normalizeRow(matrix[k], divisor, size);
+        vector[k] /= divisor;
+
         for (int i = k + 1; i < size; i++)
         {
-            double factor = matrix[i][k] / matrix[k][k];
+            double factor = matrix[i][k];
             for (int j = k; j < size; j++)
             {
                 matrix[i][j] -= factor * matrix[k][j];
             }
             vector[i] -= factor * vector[k];
         }
+
         cout << "Iteration " << k + 1 << ":" << endl;
         printMatrix(matrix, vector, size);
     }
+
+    // Нормализация последней строки
+    double divisor = matrix[size - 1][size - 1];
+    normalizeRow(matrix[size - 1], divisor, size);
+    vector[size - 1] /= divisor;
+
+    cout << "Final Matrix:" << endl;
+    printMatrix(matrix, vector, size);
 
     // Обратный ход
     double* solution = new double[size];
@@ -90,7 +110,6 @@ double* gaussianElimination(double** matrix, double* vector, int size)
         }
         solution[i] = (vector[i] - sum) / matrix[i][i];
     }
-
     return solution;
 }
 
@@ -130,7 +149,8 @@ void printResidualVector(double** matrix, double* vector, double* solution, int 
 {
     double* residual = new double[size];
 
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) 
+    {
         residual[i] = 0;
         for (int j = 0; j < size; j++) 
         {
