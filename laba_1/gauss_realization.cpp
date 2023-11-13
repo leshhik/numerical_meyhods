@@ -1,4 +1,4 @@
-#include "Source.h"
+#include "prototypes.h"
 
 void readMatrix(double** matrix, int size)
 {
@@ -42,12 +42,14 @@ void printMatrix(double** matrix, double* vector, int size)
     cout << endl;
 }
 
+#include "prototypes.h"
+
 double* gaussSolution(double** matrix, double* vector, int size)
 {
-    const double eps = 0.00001; // Точность
+    const double eps = 0.00000000001; // Точность
 
     // Прямой ход
-    for (int k = 0; k < size - 1; k++)
+    for (int k = 0; k < size; k++)
     {
         // Поиск строки с максимальным элементом в текущем столбце
         int maxRow = k;
@@ -91,14 +93,6 @@ double* gaussSolution(double** matrix, double* vector, int size)
         printMatrix(matrix, vector, size);
     }
 
-    // Нормализация последней строки
-    double divisor = matrix[size - 1][size - 1];
-    normalizeRow(matrix[size - 1], divisor, size);
-    vector[size - 1] /= divisor;
-
-    cout << "Final Matrix:" << endl;
-    printMatrix(matrix, vector, size);
-
     // Обратный ход
     double* solution = new double[size];
     for (int i = size - 1; i >= 0; i--)
@@ -110,6 +104,10 @@ double* gaussSolution(double** matrix, double* vector, int size)
         }
         solution[i] = (vector[i] - sum) / matrix[i][i];
     }
+
+    // Calculate and print the residual vector
+    printResidualVector(matrix, vector, solution, size);
+
     return solution;
 }
 
@@ -131,7 +129,7 @@ double calculateRelativeError(double* residual, double* solution, int size)
         }
     }
 
-    double error = abs(maxResidual - maxSolution) / abs(maxResidual);
+    double error = abs(maxResidual - maxSolution) / max(maxResidual, maxSolution);
     return error;
 }
 
@@ -149,10 +147,10 @@ void printResidualVector(double** matrix, double* vector, double* solution, int 
 {
     double* residual = new double[size];
 
-    for (int i = 0; i < size; i++) 
+    for (int i = 0; i < size; i++)
     {
         residual[i] = 0;
-        for (int j = 0; j < size; j++) 
+        for (int j = 0; j < size; j++)
         {
             residual[i] += matrix[i][j] * solution[j];
         }
@@ -160,7 +158,7 @@ void printResidualVector(double** matrix, double* vector, double* solution, int 
     }
     cout << endl;
 
-    delete[] residual;
+    delete [] residual;
 }
 
 double calculateNorm(double* vector, int size)
