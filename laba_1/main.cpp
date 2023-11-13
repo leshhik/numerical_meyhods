@@ -1,4 +1,5 @@
-#include "Source.h"
+#include "prototypes.h"
+
 int main()
 {
     double* x;
@@ -6,7 +7,7 @@ int main()
 
     cout << "Enter the number of equations: ";
     cin >> n;
-    cout << std::endl;
+    cout << endl;
 
     double** a = new double* [n];
     double* b = new double[n];
@@ -19,7 +20,7 @@ int main()
     readMatrix(a, n);
     readVector(b, n);
 
-    x = gaussianElimination(a, b, n);
+    x = gaussSolution(a, b, n);
 
     if (x == nullptr)
     {
@@ -30,9 +31,6 @@ int main()
 
     cout << "Solution:" << endl;
     printSolution(x, n);
-
-    cout << "Residual vector:" << endl;
-    printResidualVector(a, b, x, n);
 
     double* residual = new double[n];
     for (int i = 0; i < n; i++)
@@ -46,7 +44,6 @@ int main()
 
     double norm = calculateNorm(residual, n);
     cout << "Norm = " << norm << endl;
-    cout << endl;
 
     double error = calculateRelativeError(residual, x, n);
     cout << "Relative error = " << error << endl;
