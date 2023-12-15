@@ -129,7 +129,7 @@ double calculateRelativeError(double* residual, double* solution, int size)
         }
     }
 
-    double error = abs(maxResidual - maxSolution) / max(maxResidual, maxSolution);
+    double error = abs(maxResidual - maxSolution) / maxSolution;
     return error;
 }
 
