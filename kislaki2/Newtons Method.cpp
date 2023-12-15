@@ -21,8 +21,12 @@ void solveNewtonsMethod(double x1, double x2, const double E1, const double E2, 
     if (M != NULL) { cout << "Relative increment = " << M << "\n"; }
 
     int iter = 0;
-    while ((delta1 > E1 || delta2 > E2) && iter < max_iter) {
+    while ((delta1 > E1 || delta2 > E2)) {
         iter++;
+        if (iter >= max_iter) {
+            cout << "Достигнуто максимальное кол-во итераций";
+            break;
+        }
 
         cout << iter << "|\t" << "delta1| " << delta1 << "\t\t" << "delta2| " << delta2 << endl;
 
